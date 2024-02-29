@@ -29,16 +29,24 @@ export const createFile = mutation({
 });
 
 export const getFiles = query({
-  args: { orgId: v.string() },
+  args: { orgId: v.string(), searchTerm: v.optional(v.string()) },
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) return [];
 
-    return ctx.db
+    const files = await ctx.db
       .query("files")
       .withIndex("by_orgId", (q) => q.eq("orgId", args.orgId))
       .collect();
+
+    const searchTerm = args.searchTerm;
+
+    if (!searchTerm) return files;
+
+    return files.filter((file) =>
+      file.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   },
 });
 
