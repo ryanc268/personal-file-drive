@@ -9,6 +9,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -20,21 +21,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Doc, Id } from "../../convex/_generated/dataModel";
+import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import {
   FileTextIcon,
   GanttChartIcon,
   ImageIcon,
   MoreVertical,
-  TextIcon,
+  Star,
   Trash2,
 } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
 
@@ -45,6 +45,7 @@ interface FileCardProps {
 const FileCardDropdown: React.FC<FileCardProps> = ({ file }) => {
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const deleteFile = useMutation(api.files.deleteFile);
+  const favouriteFile = useMutation(api.files.favouriteFile);
   const { toast } = useToast();
   return (
     <>
@@ -90,6 +91,18 @@ const FileCardDropdown: React.FC<FileCardProps> = ({ file }) => {
           <MoreVertical />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          <DropdownMenuItem
+            className="flex gap-1 text-yellow-600 items-center cursor-pointer"
+            onClick={() =>
+              favouriteFile({
+                fileId: file._id,
+              })
+            }
+          >
+            <Star className="w-4 h-4" />
+            Favourite
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             className="flex gap-1 text-red-600 items-center cursor-pointer"
             onClick={() => setIsConfirmationOpen(true)}

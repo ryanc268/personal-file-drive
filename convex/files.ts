@@ -29,21 +29,39 @@ export const createFile = mutation({
 });
 
 export const getFiles = query({
-  args: { orgId: v.string(), searchTerm: v.optional(v.string()) },
+  args: {
+    orgId: v.string(),
+    searchTerm: v.optional(v.string()),
+    favourites: v.optional(v.boolean()),
+  },
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) return [];
 
-    const files = await ctx.db
+    let files = await ctx.db
       .query("files")
       .withIndex("by_orgId", (q) => q.eq("orgId", args.orgId))
       .collect();
 
+    // if favourites true, filter for favourites and return
+    if (args.favourites) {
+      const favouriteFiles = await ctx.db
+        .query("favourites")
+        .withIndex("by_orgId_fileId", (q) => q.eq("orgId", args.orgId))
+        .collect();
+
+      files = files.filter((file) =>
+        favouriteFiles.some((fav) => fav.fileId === file._id)
+      );
+    }
+
     const searchTerm = args.searchTerm;
 
+    // no search term, return base files query
     if (!searchTerm) return files;
 
+    // else if this is reached filter by search term
     return files.filter((file) =>
       file.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -62,6 +80,35 @@ export const deleteFile = mutation({
     if (!file) throw new ConvexError("File does not exist.");
 
     await ctx.db.delete(args.fileId);
+  },
+});
+
+export const favouriteFile = mutation({
+  args: {
+    fileId: v.id("files"),
+  },
+  async handler(ctx, args) {
+    authorize(ctx);
+
+    const file = await ctx.db.get(args.fileId);
+
+    if (!file) throw new ConvexError("File does not exist.");
+
+    const favourite = await ctx.db
+      .query("favourites")
+      .withIndex("by_orgId_fileId", (q) =>
+        q.eq("orgId", file.orgId).eq("fileId", file._id)
+      )
+      .first();
+
+    if (!favourite) {
+      await ctx.db.insert("favourites", {
+        fileId: file._id,
+        orgId: file.orgId,
+      });
+    } else {
+      await ctx.db.delete(favourite._id);
+    }
   },
 });
 

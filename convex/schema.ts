@@ -14,4 +14,8 @@ export default defineSchema({
     fileId: v.id("_storage"),
     orgId: v.string(),
   }).index("by_orgId", ["orgId"]),
+  favourites: defineTable({
+    fileId: v.id("files"),
+    orgId: v.string()
+  }).index("by_orgId_fileId", ["orgId", "fileId"]),
 });
