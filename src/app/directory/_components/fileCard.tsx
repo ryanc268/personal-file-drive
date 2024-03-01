@@ -25,6 +25,7 @@ import {
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import {
+  Download,
   FileTextIcon,
   GanttChartIcon,
   ImageIcon,
@@ -93,6 +94,13 @@ const FileCardDropdown: React.FC<FileCardProps> = ({ file }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
+            className="flex gap-1 items-center cursor-pointer"
+            onClick={() => window.open(getFileUrl(file.fileId), "_blank")}
+          >
+            <Download className="w-4 h-4" />
+            Download
+          </DropdownMenuItem>
+          <DropdownMenuItem
             className="flex gap-1 text-yellow-600 items-center cursor-pointer"
             onClick={() =>
               toggleFavourite({
@@ -158,11 +166,7 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
         {file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
         {file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
       </CardContent>
-      <CardFooter className="flex justify-center">
-        <Button onClick={() => window.open(getFileUrl(file.fileId), "_blank")}>
-          Download
-        </Button>
-      </CardFooter>
+      <CardFooter></CardFooter>
     </Card>
   );
 };

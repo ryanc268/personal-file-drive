@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { MutationCtx, QueryCtx, mutation, query } from "./_generated/server";
+import { MutationCtx, QueryCtx, internalMutation, mutation, query } from "./_generated/server";
 import { fileTypes } from "./schema";
 
 // public functions
@@ -98,6 +98,15 @@ export const toggleFavourite = mutation({
     });
   },
 });
+
+// internal functions
+
+export const cleanStorage = internalMutation({
+  args: {},
+  async handler(ctx, args) {
+    
+  }
+})
 
 // local functions
 

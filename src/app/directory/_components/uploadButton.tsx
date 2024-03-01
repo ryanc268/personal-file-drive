@@ -50,7 +50,6 @@ export default function UploadButton() {
       file: undefined,
     },
   });
-
   const fileRef = form.register("file");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
