@@ -20,10 +20,8 @@ const FileBrowser: React.FC<FileBrowserProps> = ({ title, favourites }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { organization, isLoaded: orgIsLoaded } = useOrganization();
-  const { user, isLoaded: userIsLoaded } = useUser();
 
-  let orgId: string | undefined;
-  if (orgIsLoaded && userIsLoaded) orgId = organization?.id ?? user?.id;
+  const orgId = organization?.id;
 
   const files = useQuery(
     api.files.getFiles,
@@ -33,8 +31,14 @@ const FileBrowser: React.FC<FileBrowserProps> = ({ title, favourites }) => {
     <div>
       {files === undefined && (
         <div className="flex flex-col gap-4 w-full items-center mt-12">
-          <Loader2 className="w-24 h-24 animate-spin" />
-          <div className="text-2xl">Loading your files...</div>
+          {orgIsLoaded && !orgId ? (
+            <NoOrgState />
+          ) : (
+            <>
+              <Loader2 className="w-24 h-24 animate-spin" />
+              <div className="text-2xl">Loading your files...</div>
+            </>
+          )}
         </div>
       )}
       {files && (
@@ -66,6 +70,22 @@ function NoFilesState() {
         src="/emptyfiles.svg"
       />
       <div className="text-2xl">No files currently uploaded</div>
+    </div>
+  );
+}
+
+function NoOrgState() {
+  return (
+    <div className="flex flex-col gap-4 w-full items-center mt-12">
+      <Image
+        alt="Empty folder icon"
+        width="300"
+        height="300"
+        src="/company.svg"
+      />
+      <div className="text-2xl">
+        You must be part of an organization to use the directory
+      </div>
     </div>
   );
 }

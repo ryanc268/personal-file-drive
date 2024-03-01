@@ -24,6 +24,7 @@ export const createFile = mutation({
       type: args.type,
       fileId: args.fileId,
       orgId: args.orgId,
+      isFavourite: false,
     });
   },
 });
@@ -46,14 +47,7 @@ export const getFiles = query({
 
     // if favourites true, filter for favourites and return
     if (args.favourites) {
-      const favouriteFiles = await ctx.db
-        .query("favourites")
-        .withIndex("by_orgId_fileId", (q) => q.eq("orgId", args.orgId))
-        .collect();
-
-      files = files.filter((file) =>
-        favouriteFiles.some((fav) => fav.fileId === file._id)
-      );
+      files = files.filter((file) => file.isFavourite === true);
     }
 
     const searchTerm = args.searchTerm;
@@ -83,9 +77,10 @@ export const deleteFile = mutation({
   },
 });
 
-export const favouriteFile = mutation({
+export const toggleFavourite = mutation({
   args: {
     fileId: v.id("files"),
+    isFavourite: v.boolean(),
   },
   async handler(ctx, args) {
     authorize(ctx);
@@ -94,21 +89,13 @@ export const favouriteFile = mutation({
 
     if (!file) throw new ConvexError("File does not exist.");
 
-    const favourite = await ctx.db
-      .query("favourites")
-      .withIndex("by_orgId_fileId", (q) =>
-        q.eq("orgId", file.orgId).eq("fileId", file._id)
-      )
-      .first();
-
-    if (!favourite) {
-      await ctx.db.insert("favourites", {
-        fileId: file._id,
-        orgId: file.orgId,
-      });
-    } else {
-      await ctx.db.delete(favourite._id);
-    }
+    await ctx.db.patch(file._id, {
+      name: file.name,
+      type: file.type,
+      fileId: file.fileId,
+      orgId: file.orgId,
+      isFavourite: args.isFavourite,
+    });
   },
 });
 

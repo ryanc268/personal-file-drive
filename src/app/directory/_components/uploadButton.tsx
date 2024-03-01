@@ -53,9 +53,7 @@ export default function UploadButton() {
 
   const fileRef = form.register("file");
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     if (!orgId) return;
     const postUrl = await generateUploadUrl();
     const fileType = values.file[0].type;

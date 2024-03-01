@@ -30,6 +30,7 @@ import {
   ImageIcon,
   MoreVertical,
   Star,
+  StarOff,
   Trash2,
 } from "lucide-react";
 import { ReactNode, useState } from "react";
@@ -45,7 +46,7 @@ interface FileCardProps {
 const FileCardDropdown: React.FC<FileCardProps> = ({ file }) => {
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const deleteFile = useMutation(api.files.deleteFile);
-  const favouriteFile = useMutation(api.files.favouriteFile);
+  const toggleFavourite = useMutation(api.files.toggleFavourite);
   const { toast } = useToast();
   return (
     <>
@@ -94,13 +95,21 @@ const FileCardDropdown: React.FC<FileCardProps> = ({ file }) => {
           <DropdownMenuItem
             className="flex gap-1 text-yellow-600 items-center cursor-pointer"
             onClick={() =>
-              favouriteFile({
+              toggleFavourite({
                 fileId: file._id,
+                isFavourite: !file.isFavourite,
               })
             }
           >
-            <Star className="w-4 h-4" />
-            Favourite
+            {file.isFavourite ? (
+              <>
+                <StarOff className="w-4 h-4" /> UnFavourite
+              </>
+            ) : (
+              <>
+                <Star className="w-4 h-4" /> Favourite
+              </>
+            )}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

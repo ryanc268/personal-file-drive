@@ -16,7 +16,13 @@ export default function Header() {
         <div>Personal File Drive</div>
         {session.isLoaded && session.isSignedIn ? (
           <div className="flex gap-2">
-            <OrganizationSwitcher />
+            <OrganizationSwitcher
+              hidePersonal
+              afterCreateOrganizationUrl="/directory/files"
+              afterLeaveOrganizationUrl="/directory/files"
+              afterSelectOrganizationUrl="/directory/files"
+              afterSwitchOrganizationUrl="/directory/files"
+            />
             <UserButton />
           </div>
         ) : (

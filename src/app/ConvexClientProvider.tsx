@@ -13,6 +13,8 @@ export default function ConvexClientProvider({
 }) {
   return (
     <ClerkProvider
+      afterSignInUrl="/directory/files"
+      afterSignUpUrl="/directory/files"
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
