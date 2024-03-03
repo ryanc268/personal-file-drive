@@ -166,7 +166,10 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
         {file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
         {file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
       </CardContent>
-      <CardFooter></CardFooter>
+      <CardFooter className="text-xs flex flex-col items-start">
+        <h3>Uploaded by: {file.createdByName}</h3>
+        <h3>Email: {file.createdByEmail}</h3>
+      </CardFooter>
     </Card>
   );
 };

@@ -14,5 +14,7 @@ export default defineSchema({
     fileId: v.id("_storage"),
     orgId: v.string(),
     isFavourite: v.boolean(),
+    createdByName: v.string(),
+    createdByEmail: v.string()
   }).index("by_orgId", ["orgId"]),
 });

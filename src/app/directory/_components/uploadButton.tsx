@@ -75,6 +75,9 @@ export default function UploadButton() {
         type: types[fileType],
         fileId: storageId,
         orgId,
+        createdByName: user?.fullName ?? "Private User",
+        createdByEmail:
+          user?.primaryEmailAddress?.emailAddress ?? "Private Email",
       });
       form.reset();
       setIsFileModalOpen(false);

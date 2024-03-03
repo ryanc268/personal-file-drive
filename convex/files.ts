@@ -1,5 +1,11 @@
 import { ConvexError, v } from "convex/values";
-import { MutationCtx, QueryCtx, internalMutation, mutation, query } from "./_generated/server";
+import {
+  MutationCtx,
+  QueryCtx,
+  internalMutation,
+  mutation,
+  query,
+} from "./_generated/server";
 import { fileTypes } from "./schema";
 
 // public functions
@@ -15,6 +21,8 @@ export const createFile = mutation({
     type: fileTypes,
     fileId: v.id("_storage"),
     orgId: v.string(),
+    createdByName: v.string(),
+    createdByEmail: v.string(),
   },
   async handler(ctx, args) {
     authorize(ctx);
@@ -25,6 +33,8 @@ export const createFile = mutation({
       fileId: args.fileId,
       orgId: args.orgId,
       isFavourite: false,
+      createdByName: args.createdByName,
+      createdByEmail: args.createdByEmail,
     });
   },
 });
@@ -95,6 +105,8 @@ export const toggleFavourite = mutation({
       fileId: file.fileId,
       orgId: file.orgId,
       isFavourite: args.isFavourite,
+      createdByName: file.createdByName,
+      createdByEmail: file.createdByEmail,
     });
   },
 });
@@ -103,10 +115,8 @@ export const toggleFavourite = mutation({
 
 export const cleanStorage = internalMutation({
   args: {},
-  async handler(ctx, args) {
-    
-  }
-})
+  async handler(ctx, args) {},
+});
 
 // local functions
 
