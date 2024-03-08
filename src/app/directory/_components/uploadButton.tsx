@@ -133,11 +133,15 @@ export default function UploadButton() {
                 <FormField
                   control={form.control}
                   name="file"
-                  render={() => (
+                  render={({}) => (
                     <FormItem>
                       <FormLabel>File</FormLabel>
                       <FormControl>
-                        <Input type="file" {...fileRef} />
+                        <Input
+                          className="file:text-xs file:cursor-pointer file:text-white file:border file:border-white file:px-2 file:py-1 file:rounded-md"
+                          type="file"
+                          {...fileRef}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

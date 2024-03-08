@@ -23,7 +23,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
-import { Button } from "@/components/ui/button";
 import {
   Download,
   FileTextIcon,
@@ -39,6 +38,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
+import Link from "next/link";
 
 interface FileCardProps {
   file: Doc<"files">;
@@ -94,14 +94,14 @@ const FileCardDropdown: React.FC<FileCardProps> = ({ file }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
-            className="flex gap-1 items-center cursor-pointer"
+            className="flex gap-1 items-center cursor-pointer text-green-600"
             onClick={() => window.open(getFileUrl(file.fileId), "_blank")}
           >
             <Download className="w-4 h-4" />
             Download
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="flex gap-1 text-yellow-600 items-center cursor-pointer"
+            className="flex gap-1 text-yellow-500 items-center cursor-pointer"
             onClick={() =>
               toggleFavourite({
                 fileId: file._id,
@@ -138,6 +138,7 @@ function getFileUrl(fileId: Id<"_storage">): string {
 }
 
 const FileCard: React.FC<FileCardProps> = ({ file }) => {
+  const toggleFavourite = useMutation(api.files.toggleFavourite);
   const typeIcons = {
     image: <ImageIcon />,
     pdf: <FileTextIcon />,
@@ -166,9 +167,26 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
         {file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
         {file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
       </CardContent>
-      <CardFooter className="text-xs flex flex-col items-start">
-        <h3>Uploaded by: {file.createdByName}</h3>
-        <h3>Email: {file.createdByEmail}</h3>
+      <CardFooter className="text-xs flex flex-col items-start space-y-1 relative">
+        <div className="font-medium text-zinc-300">Uploaded by:</div>
+        <div className="text-zinc-100">{file.createdByName}</div>
+        <div className="font-medium text-zinc-300">Email:</div>
+        <div className="text-blue-400 hover:text-blue-300">
+          <Link href={`mailto:${file.createdByEmail}`}>
+            {file.createdByEmail}
+          </Link>
+        </div>
+        {file.isFavourite && (
+          <Star
+            className="w-8 absolute bottom-2 right-2 text-yellow-500 cursor-pointer"
+            onClick={() =>
+              toggleFavourite({
+                fileId: file._id,
+                isFavourite: !file.isFavourite,
+              })
+            }
+          />
+        )}
       </CardFooter>
     </Card>
   );

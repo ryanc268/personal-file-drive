@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container mx-auto flex justify-between">
         <div className="text-lg">Personal File Drive</div>
         <Link href="https://ryancoppa.com" target="_blank">
-          My Portfilio
+          My Portfolio
         </Link>
       </div>
     </div>
